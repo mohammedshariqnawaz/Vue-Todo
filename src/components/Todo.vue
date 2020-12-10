@@ -40,12 +40,12 @@
           >
             <input
               type="checkbox"
-              :checked="task.isCompleted"
+              :checked="task.completed"
               @click="finishTodo(task)"
             /><span
               style="margin-left:10px;"
               :style="[
-                task.isCompleted
+                task.completed
                   ? { 'text-decoration': 'line-through' }
                   : { 'text-decoration': 'none' },
               ]"
@@ -66,48 +66,29 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data: function() {
     return {
-      todolist: [
-        {
-          id: 1,
-          title: "First Task",
-          isCompleted: false,
-        },
-        {
-          id: 2,
-          title: "Second Task",
-          isCompleted: false,
-        },
-        {
-          id: 3,
-          title: "Third Task",
-          isCompleted: false,
-        },
-        // {
-        //   id: 4,
-        //   title: "Fourth Task",
-        //   isCompleted: false,
-        // },
-      ],
+      todolist:[],
       newTodo: {
         id: "",
         title: "",
-        isCompleted: false,
+        completed: false,
       },
     };
   },
   methods: {
     addTodo() {
+      console.log(this.todolist)
       if (this.todolist.length > 1) {
         this.newTodo.id = this.todolist[this.todolist.length - 1].id + 1;
         this.todolist.push(this.newTodo);
-        this.newTodo = { id: "", title: "", isCompleted: false };
+        this.newTodo = { id: "", title: "", completed: false };
       } else {
         this.newTodo.id = "1";
         this.todolist.push(this.newTodo);
-        this.newTodo = { id: "", title: "", isCompleted: false };
+        this.newTodo = { id: "", title: "", completed: false };
       }
     },
     delTodo(task) {
@@ -117,8 +98,23 @@ export default {
       }
     },
     finishTodo(task) {
-      task.isCompleted = !task.isCompleted;
+      task.completed = !task.completed;
     },
+  },
+  created() {
+    // axios.get('https://jsonplaceholder.typicode.com/todos')
+    //   .then(function(response){
+    //     console.log("todolist",this.todolist)
+    //     // this.todolist = response.data
+    //     console.log(response.data)
+    //   })
+    //   .catch(function(error){
+    //     console.log("Promise Error",error)
+    //   })
+    console.log(this.todolist)
+    axios.get('https://jsonplaceholder.typicode.com/todos?_limit=8')
+      .then(response => this.todolist = response.data)
+      .catch(error => console.log("Promise Error", error))
   },
 };
 </script>
